@@ -1,10 +1,8 @@
 package com.example.todocompose.ui
 
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import com.example.todocompose.data.TodoItem
 import com.example.todocompose.data.TodoRepository
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
@@ -18,14 +16,14 @@ class TodoViewModel(private val repository: TodoRepository) : ViewModel() {
         refreshTodos()
     }
 
-    fun addTodo(task: String) {
-        val newTodo = TodoItem(id = todos.value.size + 1, task = task)
+    fun addTodo(title: String, description: String, dueDate: String, priority: String) {
+        val newTodo = TodoItem(id = todos.value.size + 1, title = title, description = description, dueDate = dueDate, priority = priority)
         repository.addTodo(newTodo)
         refreshTodos()
     }
 
     fun toggleTodoStatus(todo: TodoItem) {
-        val updatedTodo = todo.copy(isCompleted = !todo.isCompleted)
+        val updatedTodo = todo.copy(isArchived = !todo.isArchived)
         repository.updateTodo(updatedTodo)
         refreshTodos()
     }
