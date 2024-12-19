@@ -1,4 +1,4 @@
-package com.example.todocompose.data
+package com.example.todocompose.data.model
 
 class Category (
     val name: String,

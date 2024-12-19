@@ -1,5 +1,7 @@
 package com.example.todocompose.data
 
+import com.example.todocompose.data.model.TodoItem
+
 class InMemoryTodoRepository : TodoRepository {
     private var todoList = mutableListOf<TodoItem>()
 

@@ -3,11 +3,9 @@ package com.example.todocompose.ui
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -23,9 +21,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.example.todocompose.data.Category
-import com.example.todocompose.data.TodoItem
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
+import com.example.todocompose.R
+import com.example.todocompose.data.model.Category
+import com.example.todocompose.data.model.TodoItem
 import kotlin.reflect.KFunction4
 
 
@@ -40,16 +40,16 @@ fun TodoScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(dimensionResource(R.dimen.padding_big))
     ) {
         Button(onClick = onBack) {
-            Text("Back to Categories")
+            Text(stringResource(R.string.back_button))
         }
 
         Text(
             text = "Tasks in ${category.name}",
             style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(vertical = 8.dp)
+            modifier = Modifier.padding(vertical = dimensionResource(R.dimen.padding_small))
         )
 
         TodoInput(onAddTodo = todoViewModel::addTodo)
@@ -72,7 +72,7 @@ fun TodoItemRow(todo: TodoItem, onTodoClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(dimensionResource(R.dimen.padding_small))
             .clickable { onTodoClick() }
     ) {
         Text(text = todo.title, modifier = Modifier.weight(1f))
@@ -94,51 +94,57 @@ fun TodoInput(onAddTodo: KFunction4<String, String, String, String, Unit>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(12.dp)
+            .padding(dimensionResource(R.dimen.padding_medium))
     ) {
         TextField(
             value = title,
             onValueChange = { title = it },
-            label = { Text("Enter title") },
+            label = { Text(stringResource(R.string.title)) },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 4.dp)
+                .padding(bottom = dimensionResource(R.dimen.padding_very_small))
         )
 
         TextField(
             value = description,
             onValueChange = { description = it },
-            label = { Text("Enter description") },
+            label = { Text(stringResource(R.string.description)) },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 4.dp)
+                .padding(bottom = dimensionResource(R.dimen.padding_very_small))
         )
 
         TextField(
             value = dueDate,
             onValueChange = { dueDate = it },
-            label = { Text("Enter due date") },
+            label = { Text(stringResource(R.string.due_date)) },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 4.dp)
+                .padding(bottom = dimensionResource(R.dimen.padding_very_small))
         )
 
         TextField(
             value = priority,
             onValueChange = { priority = it },
-            label = { Text("Enter priority") },
+            label = { Text(stringResource(R.string.priority)) },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp)
+                .padding(bottom = dimensionResource(R.dimen.padding_small))
         )
 
         Button(
             onClick = {
-                onAddTodo(title, description, dueDate, priority)
+                if (title.isNotEmpty() && description.isNotEmpty() && dueDate.isNotEmpty() && priority.isNotEmpty()) {
+                    onAddTodo(title, description, dueDate, priority)
+                    title = ""
+                    description = ""
+                    dueDate = ""
+                    priority = ""
+                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Add")
+            Text(stringResource(R.string.add_button))
         }
     }
 }

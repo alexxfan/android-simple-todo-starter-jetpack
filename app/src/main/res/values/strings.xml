@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">ToDoCompose</string>
+    <string name="top_bar_name">To Do App</string>
+    <string name="grid_layout_toggle">Grid layout</string>
+    <string name="linear_layout_toggle">Linear layout</string>
+    <string name="add_button">Add</string>
+    <string name="back_button">Back to Categories</string>
+    <string name="title">Enter Title</string>
+    <string name="description">Enter Description</string>
+    <string name="due_date">Enter Due Date</string>
+    <string name="priority">Enter Priority</string>
+
+
 </resources>
