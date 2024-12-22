@@ -2,10 +2,10 @@
 
 ## Initial Release
 
-![Category Preview](/category.png)
+![Category Preview](category.png)
 
-![Todo Preview](/todo.png)
+![Todo Preview](todo.png)
 
 ## Future Release
 
-![Future Homescreen Preview](/future.png)
+![Future Homescreen Preview](future.png)
