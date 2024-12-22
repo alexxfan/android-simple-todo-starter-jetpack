@@ -19,13 +19,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /*
- * View model of Dessert Release components
+ * View model of Category components
  */
 class CategoryViewModel(private val userPreferencesRepository: UserPreferencesRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CategoryUiState())
 
-    // UI states access for various [DessertReleaseUiState]
     val uiState: StateFlow<CategoryUiState> = userPreferencesRepository.isLinearLayout.map { isLinearLayout ->
         CategoryUiState(isLinearLayout)
     }.stateIn(
@@ -57,7 +56,7 @@ class CategoryViewModel(private val userPreferencesRepository: UserPreferencesRe
 }
 
 /*
- * Data class containing various UI States for Dessert Release screens
+ * Data class containing various UI States for Category screens
  */
 data class CategoryUiState(
     val isLinearLayout: Boolean = true,

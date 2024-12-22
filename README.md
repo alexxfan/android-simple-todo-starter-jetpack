@@ -1,7 +1,12 @@
-# Jetpack Compose Starter App
+# Simple todo application.
 
-Simple todo application.
+## Student Information
 
-Provided as is, bugs and all.
+| Field          | Value    |
+|----------------|----------|
+| Name           | Alex Fan |
+| Student Number | 20077347 |
 
-Happy composing!
+## Docs
+
+Please refer to the docs folder for the relevant markdown files

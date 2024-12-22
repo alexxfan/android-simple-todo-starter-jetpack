@@ -1,6 +1,7 @@
 package com.example.todocompose.ui
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults.cardElevation
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -20,13 +23,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.example.todocompose.R
 import com.example.todocompose.data.model.Category
 import com.example.todocompose.data.model.TodoItem
-import kotlin.reflect.KFunction4
 
 
 @Composable
@@ -35,7 +40,8 @@ fun TodoScreen(
     onBack: () -> Unit,
     todoViewModel: TodoViewModel = viewModel(factory = TodoViewModel.Factory)
 ) {
-    val todos = todoViewModel.todos
+
+    val todos = todoViewModel.todos.value.filter { it.categoryId == category.id }
 
     Column(
         modifier = Modifier
@@ -52,9 +58,36 @@ fun TodoScreen(
             modifier = Modifier.padding(vertical = dimensionResource(R.dimen.padding_small))
         )
 
-        TodoInput(onAddTodo = todoViewModel::addTodo)
-        TodoList(todos = todos.value, onTodoClick = todoViewModel::toggleTodoStatus)
+        TodoInput(
+            onAddTodo = { title, description, dueDate, priority, category ->
+                todoViewModel.addTodo(title, description, dueDate, priority, category)
+            },
+            category = category
+        )
+
+        val archivedTodos = todos.filter { it.isArchived }
+
+        if (archivedTodos.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = dimensionResource(R.dimen.padding_small)),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_very_small))
+            ) {
+                Button(
+                    onClick = {
+                        archivedTodos.forEach { todoViewModel.deleteTodo(it) }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Delete Archived Todos")
+                }
+            }
+        }
+
+        TodoList(todos, onTodoClick = todoViewModel::toggleTodoStatus)
     }
+
 }
 
 
@@ -68,33 +101,72 @@ fun TodoList(todos: List<TodoItem>, onTodoClick: (TodoItem) -> Unit) {
 }
 
 @Composable
-fun TodoItemRow(todo: TodoItem, onTodoClick: () -> Unit) {
-    Row(
+fun TodoItemRow(todo: TodoItem, onTodoClick: (TodoItem) -> Unit) {
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(dimensionResource(R.dimen.padding_small))
-            .clickable { onTodoClick() }
+            .graphicsLayer(alpha = if (todo.isArchived) 0.5f else 1f)
+            .padding(vertical = dimensionResource(R.dimen.padding_very_small)),
+
+        elevation = cardElevation(defaultElevation = 2.dp)
     ) {
-        Text(text = todo.title, modifier = Modifier.weight(1f))
-        Checkbox(checked = todo.isArchived, onCheckedChange = null)
+        Column(
+            modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = todo.title,
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.weight(1f)
+                )
+                Checkbox(
+                    checked = todo.isArchived,
+                    onCheckedChange = { isChecked ->
+                        onTodoClick(todo.copy(isArchived = isChecked))
+                    }
+                )
+            }
+            Text(
+                text = "Description: ${todo.description}",
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Priority: ${todo.priority}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Text(
+                    text = "Due: ${todo.dueDate}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
     }
 }
 
 
 
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodoInput(onAddTodo: KFunction4<String, String, String, String, Unit>) {
+fun TodoInput(onAddTodo:(String, String, String, String, Category) -> Unit , category: Category) {
 //    var task by remember { mutableStateOf("") }
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var dueDate  by remember { mutableStateOf("") }
-    var priority by remember { mutableStateOf("") }
+    var title by rememberSaveable { mutableStateOf("") }
+    var description by rememberSaveable { mutableStateOf("") }
+    var dueDate  by rememberSaveable { mutableStateOf("") }
+    var priority by rememberSaveable { mutableStateOf("") }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(dimensionResource(R.dimen.padding_medium))
+            .padding(dimensionResource(R.dimen.padding_small))
     ) {
         TextField(
             value = title,
@@ -135,14 +207,15 @@ fun TodoInput(onAddTodo: KFunction4<String, String, String, String, Unit>) {
         Button(
             onClick = {
                 if (title.isNotEmpty() && description.isNotEmpty() && dueDate.isNotEmpty() && priority.isNotEmpty()) {
-                    onAddTodo(title, description, dueDate, priority)
+                    onAddTodo(title, description, dueDate, priority, category)
                     title = ""
                     description = ""
                     dueDate = ""
                     priority = ""
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
             Text(stringResource(R.string.add_button))
         }

@@ -1,6 +1,7 @@
 package com.example.todocompose.data.model
 
-class Category (
+data class Category (
+    val id : Int,
     val name: String,
     val toDos: MutableList<TodoItem> = mutableListOf()
 )

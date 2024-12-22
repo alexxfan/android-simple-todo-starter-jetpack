@@ -17,4 +17,8 @@ class InMemoryTodoRepository : TodoRepository {
             todoList[index] = todo
         }
     }
+
+    override fun deleteTodo(todo: TodoItem) {
+        todoList.removeIf { it.id == todo.id }
+    }
 }

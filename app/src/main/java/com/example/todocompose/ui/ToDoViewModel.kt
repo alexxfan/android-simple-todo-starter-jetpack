@@ -17,8 +17,8 @@ class TodoViewModel(private val repository: TodoRepository) : ViewModel() {
         refreshTodos()
     }
 
-    fun addTodo(title: String, description: String, dueDate: String, priority: String) {
-        val newTodo = TodoItem(id = todos.value.size + 1, title = title, description = description, dueDate = dueDate, priority = priority)
+    fun addTodo(title: String, description: String, dueDate: String, priority: String, category: Category) {
+        val newTodo = TodoItem(id = todos.value.size + 1, title = title, description = description, dueDate = dueDate, priority = priority, categoryId = category.id)
         repository.addTodo(newTodo)
         refreshTodos()
     }
@@ -29,9 +29,21 @@ class TodoViewModel(private val repository: TodoRepository) : ViewModel() {
         refreshTodos()
     }
 
+
     private fun refreshTodos() {
         todos.value = repository.getTodos()
     }
+
+    fun getTodosByCategory(categoryId: Int): List<TodoItem> {
+        return repository.getTodos().filter { it.categoryId == categoryId }
+    }
+
+    fun deleteTodo(todo: TodoItem) {
+        repository.deleteTodo(todo)
+        refreshTodos()
+    }
+
+
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
