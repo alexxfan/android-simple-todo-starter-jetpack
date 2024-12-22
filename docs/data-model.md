@@ -1,6 +1,6 @@
 ## Mind Map
 
-``` Memaid
+```mermaid
 mindmap
   root((TODO App))
     Tasks
