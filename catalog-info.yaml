@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: android-simple-todo-starter-jetpack
+  annotations:
+    github.com/project-slug: alexxfan/android-simple-todo-starter-jetpack
+spec:
+  type: other
+  lifecycle: unknown
+  owner: guests
